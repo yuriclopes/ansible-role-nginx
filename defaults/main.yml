@@ -97,3 +97,5 @@ nginx_exporter_enabled: true
 nginx_exporter_user: nginx_exporter
 nginx_exporter_password: nginx_exporter
 nginx_exporter_environment: {}
+nginx_exporter_stub_port: 8080
+nginx_exporter_stub_path: /nginx-status
