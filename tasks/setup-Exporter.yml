@@ -1,0 +1,72 @@
+---
+- name: Create the nginx_exporter group
+  ansible.builtin.group:
+    name: "{{ nginx_exporter_user }}"
+    state: present
+    system: true
+
+- name: Create the nginx_exporter user
+  ansible.builtin.user:
+    name: "{{ nginx_exporter_user }}"
+    groups: "{{ nginx_exporter_user }}"
+    append: true
+    shell: /usr/sbin/nologin
+    system: true
+    create_home: false
+
+- name: Download exporter block
+  block:
+    - name: Download nginx_exporter binary to local folder
+      become: false
+      ansible.builtin.get_url:
+        url: "{{ nginx_exporter_url }}"
+        dest: "/tmp/nginx_exporter-{{ nginx_exporter_version }}.linux-amd64.tar.gz"
+        checksum: "sha256:{{ nginx_exporter_sha256 }}"
+        mode: '0644'
+      register: _download_binary
+      until: _download_binary is succeeded
+      retries: 5
+      delay: 2
+      delegate_to: localhost
+      check_mode: false
+
+    - name: Unpack nginx_exporter binary
+      become: false
+      ansible.builtin.unarchive:
+        src: "/tmp/nginx_exporter-{{ nginx_exporter_version }}.linux-amd64.tar.gz"
+        dest: "/tmp"
+        creates: "/tmp/nginx_exporter-{{ nginx_exporter_version }}.linux-amd64/nginx_exporter"
+      delegate_to: localhost
+      check_mode: false
+
+    - name: Propagate nginx_exporter binaries
+      ansible.builtin.copy:
+        src: "/tmp/nginx_exporter-{{ nginx_exporter_version }}.linux-amd64/nginx_exporter"
+        dest: "/usr/local/bin/nginx_exporter"
+        mode: 0755
+        owner: root
+        group: root
+      notify: Restart nginx exporter service
+      when: not ansible_check_mode
+
+- name: Copy the nginx_exporter systemd service file
+  ansible.builtin.template:
+    src: nginx-exporter/nginx_exporter.service.j2
+    dest: /etc/systemd/system/nginx_exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Daemon reload
+    - Enable nginx exporter service
+    - Restart nginx exporter service
+
+- name: Create the nginx_exporter environment file
+  ansible.builtin.template:
+    src: nginx-exporter/nginx_exporter.environment.j2
+    dest: /etc/default/nginx_exporter
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart nginx exporter service

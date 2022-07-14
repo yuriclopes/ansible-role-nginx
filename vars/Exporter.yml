@@ -1,0 +1,4 @@
+---
+nginx_exporter_version: 0.10.0
+nginx_exporter_url: "https://github.com/nginxinc/nginx-prometheus-exporter/releases/download/v{{ nginx_exporter_version }}/nginx-prometheus-exporter_{{ nginx_exporter_version }}_linux_amd64.tar.gz"
+nginx_exporter_sha256: afaa9cd94360859d743a8cbee27ec5b6fd831611d1460b191d6a2364e6a3a93f

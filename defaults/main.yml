@@ -91,3 +91,9 @@ nginx_log_format: |-
   '$remote_addr - $remote_user [$time_local] "$request" '
   '$status $body_bytes_sent "$http_referer" '
   '"$http_user_agent" "$http_x_forwarded_for"'
+
+# NGINX Prometheus Exporter
+nginx_exporter_enabled: true
+nginx_exporter_user: nginx_exporter
+nginx_exporter_password: nginx_exporter
+nginx_exporter_environment: {}

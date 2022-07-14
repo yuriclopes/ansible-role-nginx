@@ -1,0 +1,16 @@
+[Unit]
+Description=Nginx Exporter
+
+[Service]
+User={{ nginx_exporter_user }}
+Group={{ nginx_exporter_user }}
+EnvironmentFile=-/etc/default/nginx_exporter
+ExecStart=/usr/local/bin/nginx_exporter 
+
+SyslogIdentifier=nginx_exporter
+Restart=always
+RestartSec=1
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target

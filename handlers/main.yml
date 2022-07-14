@@ -8,3 +8,13 @@
 
 - name: reload nginx
   service: name=nginx state=reloaded
+
+- name: Enable nginx exporter service
+  ansible.builtin.systemd:
+    name: "nginx_exporter.service"
+    enabled: yes
+
+- name: Restart nginx exporter service
+  ansible.builtin.systemd:
+    name: "nginx_exporter.service"
+    state: restarted

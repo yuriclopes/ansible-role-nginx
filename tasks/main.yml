@@ -3,6 +3,10 @@
 - name: Include OS-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
 
+- name: Include Exporter variables.
+  include_vars: "Exporter.yml"
+  when: nginx_exporter_enabled
+
 - name: Define nginx_user.
   set_fact:
     nginx_user: "{{ __nginx_user }}"
@@ -26,6 +30,9 @@
 
 - include_tasks: setup-Archlinux.yml
   when: ansible_os_family == 'Archlinux'
+
+- include_tasks: setup-Exporter.yml
+  when: nginx_exporter_enabled
 
 # Vhost configuration.
 - import_tasks: vhosts.yml
