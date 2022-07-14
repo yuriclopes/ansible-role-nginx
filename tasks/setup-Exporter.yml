@@ -41,7 +41,7 @@
 
     - name: Propagate nginx_exporter binaries
       ansible.builtin.copy:
-        src: "/tmp/nginx_exporter-{{ nginx_exporter_version }}.linux-amd64/nginx_exporter"
+        src: "/tmp/nginx-prometheus-exporter"
         dest: "/usr/local/bin/nginx_exporter"
         mode: 0755
         owner: root
